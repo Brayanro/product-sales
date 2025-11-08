@@ -98,14 +98,33 @@ const Table = () => {
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-xl font-semibold text-gray-900">Productos</h1>
-          <p className="mt-2 text-sm text-gray-700">
+          <h1 className="text-2xl font-semibold text-gray-900">Productos</h1>
+          <p className="mt-2 text-lg text-gray-700">
             Lista de todos los productos disponibles
           </p>
           {error && <p className="mt-2 text-sm text-red-600">Error: {error}</p>}
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-          <Button onClick={() => handleOpenModal()} variant="primary">
+          <Button
+            onClick={() => handleOpenModal()}
+            variant="primary"
+            styles="gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M12 5l0 14" />
+              <path d="M5 12l14 0" />
+            </svg>
             Crear Producto
           </Button>
         </div>
@@ -142,8 +161,8 @@ const Table = () => {
                     ? Array.from({ length: 5 }).map((_, index) => (
                         <TableRowSkeleton key={index} />
                       ))
-                    : products.map(({id, name, price, stock, imageUrl}) => (
-                        <tr key={id}>
+                    : products.map(({ id, name, price, stock, imageUrl }) => (
+                        <tr key={id} className="hover:bg-gray-50">
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                             {id}
                           </td>
@@ -168,16 +187,72 @@ const Table = () => {
                               <Button
                                 variant="secondary"
                                 size="sm"
-                                onClick={() => handleOpenModal({id, name, price, stock, imageUrl})}
+                                onClick={() =>
+                                  handleOpenModal({
+                                    id,
+                                    name,
+                                    price,
+                                    stock,
+                                    imageUrl,
+                                  })
+                                }
                               >
-                                Editar
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                  />
+                                  <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                                  <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                                  <path d="M16 5l3 3" />
+                                </svg>
                               </Button>
                               <Button
                                 variant="danger"
                                 size="sm"
-                                onClick={() => handleDelete({id, name, price, stock, imageUrl})}
+                                onClick={() =>
+                                  handleDelete({
+                                    id,
+                                    name,
+                                    price,
+                                    stock,
+                                    imageUrl,
+                                  })
+                                }
                               >
-                                Eliminar
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path
+                                    stroke="none"
+                                    d="M0 0h24v24H0z"
+                                    fill="none"
+                                  />
+                                  <path d="M4 7l16 0" />
+                                  <path d="M10 11l0 6" />
+                                  <path d="M14 11l0 6" />
+                                  <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                  <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                                </svg>
                               </Button>
                             </div>
                           </td>
@@ -277,7 +352,7 @@ const Table = () => {
               type="submit"
               className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
-              {isEditing ? "Guardar cambios" : "Crear producto"}
+              {isEditing ? "Editar producto" : "Crear producto"}
             </button>
           </div>
         </form>

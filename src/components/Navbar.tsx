@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,25 +13,25 @@ const Navbar = () => {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <a href="/" className="flex items-center">
+            <Link to="/" className="flex items-center">
               <span className="text-xl font-bold text-gray-800">
                 ProductSales
               </span>
-            </a>
+            </Link>
           </div>
           <div className="hidden sm:flex sm:items-center sm:space-x-8">
-            <a
-              href="/products"
+            <Link
+              to="/"
               className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
             >
               Productos
-            </a>
-            <a
-              href="/sales"
+            </Link>
+            <Link
+              to="/sales"
               className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
             >
               Ventas
-            </a>
+            </Link>
             <button
               onClick={handleLogout}
               className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium inline-flex items-center"
@@ -95,18 +96,18 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="sm:hidden">
             <div className="pt-2 pb-3 space-y-1">
-              <a
-                href="/products"
+              <Link
+                to="/"
                 className="block text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md text-base font-medium"
               >
                 Productos
-              </a>
-              <a
-                href="/sales"
+              </Link>
+              <Link
+                to="/sales"
                 className="block text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md text-base font-medium"
               >
                 Ventas
-              </a>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="w-full text-left text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md text-base font-medium inline-flex items-center"
