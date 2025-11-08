@@ -1,11 +1,10 @@
 import type { Product } from '../types/definitions';
-
-const API_URL = 'https://localhost:7207/api/Products';
+import { API_URL } from '../utils/apiUrl';
 
 export const ProductService = {
   getAll: async (): Promise<Product[]> => {
     try {
-      const response = await fetch(API_URL);
+      const response = await fetch(`${API_URL}/products`);
       if (!response.ok) throw new Error('Error getting products');
       return response.json();
     } catch (error) {
@@ -16,7 +15,7 @@ export const ProductService = {
 
   getById: async (id: number): Promise<Product> => {
     try {
-      const response = await fetch(`${API_URL}/${id}`);
+      const response = await fetch(`${API_URL}/products/${id}`);
       if (!response.ok) throw new Error('Error getting product by ID');
       return response.json();
     } catch (error) {
@@ -27,7 +26,7 @@ export const ProductService = {
 
   create: async (product: Omit<Product, 'id'>): Promise<Product> => {
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_URL}/products`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,7 +43,7 @@ export const ProductService = {
 
   update: async (id: number, product: Product): Promise<Product> => {
     try {
-      const response = await fetch(`${API_URL}/${id}`, {
+      const response = await fetch(`${API_URL}/products/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -61,7 +60,7 @@ export const ProductService = {
 
   delete: async (id: number): Promise<void> => {
     try {
-      const response = await fetch(`${API_URL}/${id}`, {
+      const response = await fetch(`${API_URL}/products/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Error to deleting product');
