@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useProduct } from "../hooks/useProduct";
 import type { Product } from "../types/definitions";
+import { validateField, VALIDATION_RULES } from "../utils/validation";
 import Alert from "./Alert";
 import Button from "./Button";
+import { Input } from "./Input";
 import Modal from "./Modal";
 import { TableRowSkeleton } from "./TableSkeleton";
 
@@ -32,6 +34,16 @@ const Table = () => {
     useState<ProductFormData>(initialFormData);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  const [showValidation, setShowValidation] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setCurrentProduct(initialFormData);
+    setIsEditing(false);
+    setShowValidation(false);
+    setErrors({});
+  };
 
   const handleOpenModal = (product?: Product) => {
     if (product) {
@@ -41,17 +53,43 @@ const Table = () => {
       setCurrentProduct(initialFormData);
       setIsEditing(false);
     }
+    setShowValidation(false);
+    setErrors({});
     setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setCurrentProduct(initialFormData);
-    setIsEditing(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setShowValidation(true);
+    
+    const newErrors: Record<string, string> = {};
+    
+    const nameValidation = validateField(currentProduct.name, VALIDATION_RULES.productName, 'El nombre');
+    if (!nameValidation.isValid) {
+      newErrors.name = nameValidation.errorMessage!;
+    }
+    
+    const priceValidation = validateField(currentProduct.price, VALIDATION_RULES.price, 'El precio');
+    if (!priceValidation.isValid) {
+      newErrors.price = priceValidation.errorMessage!;
+    }
+    
+    const stockValidation = validateField(currentProduct.stock, VALIDATION_RULES.stock, 'El stock');
+    if (!stockValidation.isValid) {
+      newErrors.stock = stockValidation.errorMessage!;
+    }
+    
+    const imageUrlValidation = validateField(currentProduct.imageUrl, VALIDATION_RULES.imageUrl, 'La URL de la imagen');
+    if (!imageUrlValidation.isValid) {
+      newErrors.imageUrl = imageUrlValidation.errorMessage!;
+    }
+    
+    setErrors(newErrors);
+    
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+
     try {
       if (isEditing && currentProduct.id) {
         await updateProduct(currentProduct.id, currentProduct as Product);
@@ -89,7 +127,7 @@ const Table = () => {
         name === "price" || name === "stock"
           ? value === ""
             ? 0
-            : Number(value) || 0
+            : Math.max(0, Number(value))
           : value,
     }));
   };
@@ -271,81 +309,61 @@ const Table = () => {
       >
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
-            <div className="group relative z-0 transition-all">
-              <input
-                type="text"
-                name="name"
-                id="name"
-                value={currentProduct.name}
-                onChange={handleInputChange}
-                className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-gray-900 focus:border-indigo-600 focus:outline-none focus:ring-0"
-                placeholder=" "
-                required
-              />
-              <label
-                htmlFor="name"
-                className="absolute top-3 -z-10 origin-left -translate-y-6 scale-75 transform text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:text-indigo-600"
-              >
-                Nombre del producto
-              </label>
-            </div>
-            <div className="group relative z-0 transition-all">
-              <input
-                type="number"
-                name="price"
-                id="price"
-                value={currentProduct.price}
-                onChange={handleInputChange}
-                className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-gray-900 focus:border-indigo-600 focus:outline-none focus:ring-0"
-                placeholder=" "
-                required
-                min="0"
-                step="0.01"
-              />
-              <label
-                htmlFor="price"
-                className="absolute top-3 -z-10 origin-left -translate-y-6 scale-75 transform text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:text-indigo-600"
-              >
-                Precio ($)
-              </label>
-            </div>
-            <div className="group relative z-0 transition-all">
-              <input
-                type="number"
-                name="stock"
-                id="stock"
-                value={currentProduct.stock}
-                onChange={handleInputChange}
-                className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-gray-900 focus:border-indigo-600 focus:outline-none focus:ring-0"
-                placeholder=" "
-                required
-                min="0"
-              />
-              <label
-                htmlFor="stock"
-                className="absolute top-3 -z-10 origin-left -translate-y-6 scale-75 transform text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:text-indigo-600"
-              >
-                Cantidad en stock
-              </label>
-            </div>
-            <div className="group relative z-0 transition-all">
-              <input
-                type="url"
-                name="imageUrl"
-                id="imageUrl"
-                value={currentProduct.imageUrl}
-                onChange={handleInputChange}
-                className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-gray-900 focus:border-indigo-600 focus:outline-none focus:ring-0"
-                placeholder=" "
-                required
-              />
-              <label
-                htmlFor="imageUrl"
-                className="absolute top-3 -z-10 origin-left -translate-y-6 scale-75 transform text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:text-indigo-600"
-              >
-                URL de la imagen
-              </label>
-            </div>
+            <Input
+              type="text"
+              name="name"
+              id="name"
+              label="Nombre del producto"
+              value={currentProduct.name}
+              onChange={handleInputChange}
+              error={errors.name}
+              showError={showValidation}
+              required
+              minLength={3}
+              maxLength={50}
+            />
+            
+            <Input
+              type="number"
+              name="price"
+              id="price"
+              label="Precio ($)"
+              value={currentProduct.price || ''}
+              onChange={handleInputChange}
+              error={errors.price}
+              showError={showValidation}
+              required
+              min={1}
+              step={1}
+            />
+            
+            <Input
+              type="number"
+              name="stock"
+              id="stock"
+              label="Cantidad en stock"
+              value={currentProduct.stock || ''}
+              onChange={handleInputChange}
+              error={errors.stock}
+              showError={showValidation}
+              required
+              min={1}
+              step={1}
+            />
+            
+            <Input
+              type="url"
+              name="imageUrl"
+              id="imageUrl"
+              label="URL de la imagen"
+              value={currentProduct.imageUrl}
+              onChange={handleInputChange}
+              error={errors.imageUrl}
+              showError={showValidation}
+              required
+              pattern="https?://.+"
+              title="Debe ser una URL válida comenzando con http:// o https://"
+            />
           </div>
           <div className="flex justify-end pt-4">
             <button

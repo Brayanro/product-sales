@@ -1,4 +1,6 @@
+import { useState } from "react";
 import Button from "../components/Button";
+import { SaleDetailsModal } from "../components/SaleDetailsModal";
 import { TableRowSkeleton } from "../components/TableSkeleton";
 import { useSales } from "../hooks/useSales";
 import type { Sale } from "../types/definitions";
@@ -14,6 +16,19 @@ export const Sales = () => {
     setEndDate,
     fetchReport,
   } = useSales();
+  
+  const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+
+  const handleOpenDetails = (sale: Sale) => {
+    setSelectedSale(sale);
+    setIsDetailsModalOpen(true);
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedSale(null);
+    setIsDetailsModalOpen(false);
+  };
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
@@ -35,6 +50,7 @@ export const Sales = () => {
             className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-gray-900 focus:border-indigo-600 focus:outline-none focus:ring-0"
             placeholder=" "
             required
+            max={new Date().toISOString().split('T')[0]}
           />
           <label className="absolute top-3 -z-10 origin-left -translate-y-6 scale-75 transform text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:text-indigo-600">
             Fecha inicio
@@ -49,6 +65,7 @@ export const Sales = () => {
             className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-gray-900 focus:border-indigo-600 focus:outline-none focus:ring-0"
             placeholder=" "
             required
+            max={new Date().toISOString().split('T')[0]}
           />
           <label className="absolute top-3 -z-10 origin-left -translate-y-6 scale-75 transform text-gray-500 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:text-indigo-600">
             Fecha fin
@@ -111,9 +128,7 @@ export const Sales = () => {
                           {new Date(sale.date).toLocaleDateString('es-ES', {
                             year: 'numeric',
                             month: 'long',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
+                            day: 'numeric'
                           })}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 font-medium">
@@ -126,7 +141,7 @@ export const Sales = () => {
                           <Button
                             variant="secondary"
                             size="sm"
-                            onClick={() => console.log('Ver detalles', sale.id)}
+                            onClick={() => handleOpenDetails(sale)}
                           >
                             Ver detalles
                           </Button>
@@ -149,6 +164,11 @@ export const Sales = () => {
           </div>
         </div>
       </div>
+      <SaleDetailsModal
+        sale={selectedSale}
+        isOpen={isDetailsModalOpen}
+        onClose={handleCloseDetails}
+      />
     </div>
   );
 };

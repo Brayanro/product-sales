@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { ProductService } from '../services/productService';
 import type { Product } from '../types/definitions';
 
@@ -37,9 +38,12 @@ export const useProduct = (): UseProductReturn => {
       setError(null);
       await ProductService.create(product);
       await getProducts();
+      toast.success('Producto creado exitosamente');
     } catch (error) {
       console.error(error);
-      setError(error instanceof Error ? error.message : 'Error al crear el producto');
+      const errorMessage = error instanceof Error ? error.message : 'Error al crear el producto';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -51,9 +55,12 @@ export const useProduct = (): UseProductReturn => {
       setError(null);
       await ProductService.update(id, product);
       await getProducts();
+      toast.success('Producto actualizado exitosamente');
     } catch (error) {
       console.error(error);
-      setError(error instanceof Error ? error.message : 'Error al actualizar el producto');
+      const errorMessage = error instanceof Error ? error.message : 'Error al actualizar el producto';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -65,9 +72,12 @@ export const useProduct = (): UseProductReturn => {
       setError(null);
       await ProductService.delete(id);
       await getProducts();
+      toast.success('Producto eliminado exitosamente');
     } catch (error) {
       console.error(error);
-      setError(error instanceof Error ? error.message : 'Error al eliminar el producto');
+      const errorMessage = error instanceof Error ? error.message : 'Error al eliminar el producto';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

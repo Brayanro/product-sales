@@ -1,23 +1,36 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { toast } from "sonner";
+import { useAuth } from "../hooks/useAuth";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { logout, user } = useAuth();
+  const navigate = useNavigate();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const handleLogout = () => console.log("Logout clicked");
+  const handleLogout = () => {
+    logout();
+    toast.success("Sesión cerrada exitosamente");
+    navigate("/login");
+  };
 
   return (
     <header className="bg-white shadow-md">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
             <Link to="/" className="flex items-center">
               <span className="text-xl font-bold text-gray-800">
                 ProductSales
               </span>
             </Link>
+            {user && (
+              <span className="hidden md:block text-sm text-gray-600">
+                Hola, {user.firstName}
+              </span>
+            )}
           </div>
           <div className="hidden sm:flex sm:items-center sm:space-x-8">
             <Link
@@ -30,7 +43,13 @@ const Navbar = () => {
               to="/sales"
               className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
             >
-              Ventas
+              Reporte de Ventas
+            </Link>
+            <Link
+              to="/sales/create"
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+            >
+              Registrar Venta
             </Link>
             <button
               onClick={handleLogout}
@@ -106,7 +125,13 @@ const Navbar = () => {
                 to="/sales"
                 className="block text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md text-base font-medium"
               >
-                Ventas
+                Reporte de Ventas
+              </Link>
+              <Link
+                to="/sales/create"
+                className="block text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-3 py-2 rounded-md text-base font-medium"
+              >
+                Registrar Venta
               </Link>
               <button
                 onClick={handleLogout}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
+import { SaleService } from '../services/saleService';
 import type { Sale } from '../types/definitions';
-import { API_URL } from '../utils/apiUrl';
 
 export const useSales = () => {
   const [sales, setSales] = useState<Sale[]>([]);
@@ -11,21 +12,22 @@ export const useSales = () => {
 
   const fetchReport = async () => {
     if (!startDate || !endDate) {
-      setError('Por favor selecciona ambas fechas.');
+      const errorMsg = 'Por favor selecciona ambas fechas.';
+      setError(errorMsg);
+      toast.error(errorMsg);
       return;
     }
     setError('');
     setLoading(true);
     try {
-      const response = await fetch(
-        `${API_URL}/sales/report?start=${startDate}&end=${endDate}`
-      );
-      if (!response.ok) throw new Error('Error al obtener el reporte');
-      const data: Sale[] = await response.json();
+      const data = await SaleService.getReport(startDate, endDate);
       setSales(data);
+      toast.success('Reporte generado exitosamente');
     } catch (error) {
       console.error(error);
-      setError(error instanceof Error ? error.message : 'Error al cargar las ventas');
+      const errorMsg = error instanceof Error ? error.message : 'Error al cargar las ventas';
+      setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
